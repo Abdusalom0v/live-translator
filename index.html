@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Live Translator — Uzbek & multilingual translation powered by Aisha AI"/>
+  <title>Live Translator</title>
+  <style>
+    :root {
+      --bg:           #0a0f1e;
+      --bg2:          #111827;
+      --card:         #1a2236;
+      --card2:        #1f2d45;
+      --border:       #2a3a55;
+      --accent:       #5b6af5;
+      --accent2:      #7c3aed;
+      --accent-glow:  rgba(91,106,245,.35);
+      --text:         #f0f4ff;
+      --muted:        #7a8baa;
+      --success:      #22d3a5;
+      --error:        #f87171;
+      --warn:         #fbbf24;
+      --radius:       14px;
+      --radius-sm:    9px;
+      --shadow:       0 8px 40px rgba(0,0,0,.55);
+      --tr:           .18s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Animated bg blobs */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(91,106,245,.12) 0%, transparent 70%);
+      top: -200px; left: -200px;
+      animation: drift1 18s ease-in-out infinite;
+    }
+    body::after {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(124,58,237,.1) 0%, transparent 70%);
+      bottom: -150px; right: -150px;
+      animation: drift2 22s ease-in-out infinite;
+    }
+
+    @keyframes drift1 {
+      0%,100% { transform: translate(0,0); }
+      50% { transform: translate(80px,60px); }
+    }
+    @keyframes drift2 {
+      0%,100% { transform: translate(0,0); }
+      50% { transform: translate(-60px,-40px); }
+    }
+
+    /* ── Header ──────────────────────────────────── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px;
+      background: rgba(17,24,39,.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.15rem; font-weight: 800; letter-spacing: -.02em;
+    }
+
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 2px 12px var(--accent-glow);
+    }
+
+    .logo span { background: linear-gradient(135deg, #a5b4fc, #c4b5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .header-right { display: flex; align-items: center; gap: 8px; }
+
+    .icon-btn {
+      width: 38px; height: 38px; border: 1px solid var(--border);
+      background: var(--card); color: var(--muted);
+      border-radius: var(--radius-sm); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; transition: var(--tr);
+    }
+    .icon-btn:hover { background: var(--card2); color: var(--text); border-color: var(--accent); }
+
+    /* ── Main ────────────────────────────────────── */
+    main {
+      flex: 1; position: relative; z-index: 1;
+      padding: 24px 24px 16px;
+      max-width: 1100px; margin: 0 auto; width: 100%;
+    }
+
+    /* ── Language row ────────────────────────────── */
+    .lang-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .lang-wrap { flex: 1; position: relative; }
+
+    select {
+      width: 100%; padding: 11px 38px 11px 14px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text);
+      font-size: .92rem; font-weight: 600; cursor: pointer;
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a8baa' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center;
+      transition: var(--tr);
+    }
+    select:hover, select:focus { border-color: var(--accent); outline: none; background-color: var(--card2); }
+    select option { background: #1a2236; }
+
+    .swap-btn {
+      width: 44px; height: 44px; flex-shrink: 0;
+      border: 1px solid var(--border); background: var(--card);
+      color: var(--muted); border-radius: var(--radius-sm);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; transition: var(--tr);
+    }
+    .swap-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .swap-btn:active { transform: rotate(180deg); }
+
+    /* ── Panels ──────────────────────────────────── */
+    .panels {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 14px; margin-bottom: 16px;
+    }
+
+    .panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: border-color var(--tr);
+    }
+    .panel:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+    .panel-label {
+      padding: 9px 14px; font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+      background: rgba(255,255,255,.025); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    textarea {
+      flex: 1; width: 100%; min-height: 190px; padding: 16px;
+      background: transparent; border: none;
+      color: var(--text); font-size: 1rem; line-height: 1.65;
+      resize: none; font-family: inherit;
+    }
+    textarea:focus { outline: none; }
+    textarea::placeholder { color: var(--muted); }
+
+    .panel-footer {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 10px; border-top: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+    }
+
+    .char-count { font-size: .74rem; color: var(--muted); margin-right: auto; }
+
+    .pf-btn {
+      padding: 5px 11px; border: 1px solid transparent;
+      background: rgba(255,255,255,.04); color: var(--muted);
+      border-radius: 6px; cursor: pointer; font-size: .78rem;
+      display: flex; align-items: center; gap: 4px; transition: var(--tr);
+    }
+    .pf-btn:hover { background: rgba(91,106,245,.15); color: var(--text); border-color: var(--accent); }
+    .pf-btn.playing { background: rgba(34,211,165,.15); color: var(--success); border-color: var(--success); }
+
+    /* ── Action row ──────────────────────────────── */
+    .action-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 20px; padding: 8px 0;
+    }
+
+    .mic-btn {
+      width: 70px; height: 70px; border-radius: 50%; border: none;
+      background: linear-gradient(145deg, var(--accent), var(--accent2));
+      color: #fff; font-size: 26px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 24px var(--accent-glow);
+      transition: var(--tr);
+    }
+    .mic-btn:hover { transform: scale(1.06); box-shadow: 0 6px 32px var(--accent-glow); }
+    .mic-btn:active { transform: scale(.96); }
+    .mic-btn.recording {
+      background: linear-gradient(145deg, #ef4444, #dc2626);
+      box-shadow: 0 4px 24px rgba(239,68,68,.4);
+      animation: pulse-rec 1.4s ease-in-out infinite;
+    }
+    .mic-btn .mic-hint { font-size: .6rem; display: block; margin-top: 2px; opacity: .7; }
+
+    @keyframes pulse-rec {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.09); }
+    }
+
+    .translate-btn {
+      padding: 0 32px; height: 52px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none; color: #fff; font-size: .95rem; font-weight: 700;
+      border-radius: var(--radius-sm); cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      transition: var(--tr);
+    }
+    .translate-btn:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 6px 28px var(--accent-glow); }
+    .translate-btn:active { transform: translateY(0); }
+    .translate-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+    .kbd-hint { font-size: .72rem; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    kbd {
+      display: inline-block; padding: 1px 6px;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 4px; font-size: .7rem; font-family: monospace;
+    }
+
+    /* ── Status bar ──────────────────────────────── */
+    .statusbar {
+      position: sticky; bottom: 0; z-index: 50;
+      padding: 7px 24px; min-height: 34px;
+      background: rgba(10,15,30,.92); backdrop-filter: blur(8px);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+      font-size: .78rem; color: var(--muted);
+    }
+
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+      background: var(--border);
+    }
+    .dot.ok   { background: var(--success); }
+    .dot.busy { background: var(--warn); animation: blink .9s ease-in-out infinite; }
+    .dot.err  { background: var(--error); }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+    /* ── Settings Modal ──────────────────────────── */
+    .overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: var(--radius); width: 100%; max-width: 500px;
+      box-shadow: var(--shadow);
+      animation: slide-up .2s ease;
+    }
+
+    @keyframes slide-up {
+      from { transform: translateY(18px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .modal-head {
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title { font-size: 1.05rem; font-weight: 800; }
+
+    .modal-body { padding: 22px; display: flex; flex-direction: column; gap: 18px; }
+
+    .fg { display: flex; flex-direction: column; gap: 6px; }
+    .fg label { font-size: .8rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+    .fg input {
+      padding: 10px 14px; background: var(--bg2);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-size: .88rem; font-family: monospace;
+      transition: var(--tr); width: 100%;
+    }
+    .fg input:focus { outline: none; border-color: var(--accent); }
+    .fg input::placeholder { color: var(--muted); }
+
+    .fg small { font-size: .74rem; color: var(--muted); line-height: 1.5; }
+
+    .modal-foot {
+      padding: 14px 22px; border-top: 1px solid var(--border);
+      display: flex; justify-content: flex-end; gap: 10px;
+    }
+
+    .btn {
+      padding: 9px 22px; border-radius: var(--radius-sm);
+      font-size: .88rem; font-weight: 700; cursor: pointer;
+      border: none; transition: var(--tr);
+    }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .btn-ghost:hover { background: var(--card); color: var(--text); }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+    .btn-primary:hover { opacity: .9; }
+
+    /* ── Toast ───────────────────────────────────── */
+    .toasts {
+      position: fixed; bottom: 48px; right: 20px; z-index: 400;
+      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+    }
+
+    .toast {
+      padding: 10px 16px; background: var(--card2);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-size: .84rem; box-shadow: var(--shadow);
+      animation: toast-in .25s ease;
+      border-left: 3px solid var(--accent);
+      pointer-events: auto; max-width: 320px;
+    }
+    .toast.ok  { border-left-color: var(--success); }
+    .toast.err { border-left-color: var(--error); }
+
+    @keyframes toast-in {
+      from { transform: translateX(16px); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+
+    /* ── Spinner ─────────────────────────────────── */
+    .spin {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ──────────────────────────────── */
+    @media (max-width: 640px) {
+      main { padding: 14px 12px 10px; }
+      .panels { grid-template-columns: 1fr; }
+      header { padding: 12px 14px; }
+      .translate-btn { padding: 0 20px; height: 48px; font-size: .88rem; }
+      .mic-btn { width: 60px; height: 60px; font-size: 22px; }
+      .kbd-hint { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────── -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">🌐</div>
+    <span>Live Translator</span>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn" onclick="openSettings()" title="Settings (API keys)">⚙️</button>
+  </div>
+</header>
+
+<!-- ── Main ───────────────────────────────────── -->
+<main>
+  <!-- Language selectors -->
+  <div class="lang-row">
+    <div class="lang-wrap">
+      <select id="srcLang">
+        <option value="uz">🇺🇿 Uzbek</option>
+        <option value="ru">🇷🇺 Russian</option>
+        <option value="en" selected>🇬🇧 English</option>
+        <option value="tr">🇹🇷 Turkish</option>
+        <option value="ar">🇸🇦 Arabic</option>
+      </select>
+    </div>
+    <button class="swap-btn" onclick="swapLangs()" title="Swap languages">⇄</button>
+    <div class="lang-wrap">
+      <select id="tgtLang">
+        <option value="uz" selected>🇺🇿 Uzbek</option>
+        <option value="ru">🇷🇺 Russian</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="tr">🇹🇷 Turkish</option>
+        <option value="ar">🇸🇦 Arabic</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Translation panels -->
+  <div class="panels">
+    <!-- Source -->
+    <div class="panel" id="srcPanel">
+      <div class="panel-label">📝 Source text</div>
+      <textarea id="srcText"
+        placeholder="Type or speak to translate…&#10;&#10;Hint: press Ctrl+Enter to translate quickly"
+        oninput="updateCount('src')"
+      ></textarea>
+      <div class="panel-footer">
+        <span class="char-count" id="srcCount">0</span>
+        <button class="pf-btn" id="srcSpeakBtn" onclick="speak('src')">🔊 Speak</button>
+        <button class="pf-btn" onclick="copyText('src')">📋 Copy</button>
+        <button class="pf-btn" onclick="clearPanel('src')">✕ Clear</button>
+      </div>
+    </div>
+
+    <!-- Target -->
+    <div class="panel" id="tgtPanel">
+      <div class="panel-label">✨ Translation</div>
+      <textarea id="tgtText"
+        placeholder="Translation will appear here…"
+        readonly
+      ></textarea>
+      <div class="panel-footer">
+        <span class="char-count" id="tgtCount">0</span>
+        <button class="pf-btn" id="tgtSpeakBtn" onclick="speak('tgt')">🔊 Speak</button>
+        <button class="pf-btn" onclick="copyText('tgt')">📋 Copy</button>
+        <button class="pf-btn" onclick="clearPanel('tgt')">✕ Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action row -->
+  <div class="action-row">
+    <div style="text-align:center">
+      <button class="mic-btn" id="micBtn" onclick="toggleRecord()" title="Hold to record speech">
+        🎤
+      </button>
+      <div class="mic-hint" style="font-size:.7rem;color:var(--muted);margin-top:5px">Speak</div>
+    </div>
+
+    <button class="translate-btn" id="translateBtn" onclick="translate()">
+      <span>✨</span> Translate
+    </button>
+
+    <div class="kbd-hint">
+      <kbd>Ctrl</kbd>+<kbd>↵</kbd>
+    </div>
+  </div>
+</main>
+
+<!-- ── Status bar ──────────────────────────────── -->
+<div class="statusbar">
+  <div class="dot" id="statusDot"></div>
+  <span id="statusMsg">Ready — type or speak to translate</span>
+</div>
+
+<!-- ── Settings modal ─────────────────────────── -->
+<div class="overlay" id="settingsOverlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">⚙️ Settings</span>
+      <button class="icon-btn" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label>Aisha API Key</label>
+        <input type="text" id="cfgAishaKey" placeholder="poERXvFD.…"/>
+        <small>Used for Uzbek speech-to-text (microphone) and text-to-speech.
+          Get your key at <strong>aisha.group</strong>.</small>
+      </div>
+      <div class="fg">
+        <label>Translation backend URL <span style="opacity:.5">(optional)</span></label>
+        <input type="text" id="cfgBackendUrl" placeholder="https://your-backend.railway.app"/>
+        <small>If you have a running backend with <code>/api/translate</code>, paste the URL here.
+          Leave empty to use Claude API directly.</small>
+      </div>
+      <div class="fg">
+        <label>Claude API key <span style="opacity:.5">(direct, if no backend)</span></label>
+        <input type="password" id="cfgClaudeKey" placeholder="sk-ant-…"/>
+        <small>Used only when no backend URL is set. Stored in your browser only, never sent anywhere else.</small>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeSettings()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Save settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toasts ──────────────────────────────────── -->
+<div class="toasts" id="toastBox"></div>
+
+<!-- Hidden audio player -->
+<audio id="player" style="display:none"></audio>
+
+<script>
+/* ════════════════════════════════════════════════
+   Config & constants
+═══════════════════════════════════════════════ */
+const AISHA_STT  = 'https://back.aisha.group/cc/v1/stt/';
+const AISHA_TTS  = 'https://back.aisha.group/cc/v1/tts/';
+const CLAUDE_URL = 'https://api.anthropic.com/v1/messages';
+
+const DEFAULT_AISHA_KEY = 'poERXvFD.jZMkpGSGL1Dtn2mRX6eEoVRrwP46tje2';
+
+const LANG_NAME = {
+  uz:'Uzbek', ru:'Russian', en:'English', tr:'Turkish', ar:'Arabic'
+};
+
+const LANG_BCP47 = {
+  en:'en-US', ru:'ru-RU', tr:'tr-TR', ar:'ar-SA', uz:'uz-UZ'
+};
+
+/* ════════════════════════════════════════════════
+   Settings (localStorage)
+═══════════════════════════════════════════════ */
+function getSettings() {
+  return {
+    aishaKey:   localStorage.getItem('aishaKey')   || DEFAULT_AISHA_KEY,
+    backendUrl: (localStorage.getItem('backendUrl') || '').replace(/\/$/, ''),
+    claudeKey:  localStorage.getItem('claudeKey')  || '',
+  };
+}
+
+function openSettings() {
+  const s = getSettings();
+  document.getElementById('cfgAishaKey').value   = s.aishaKey   === DEFAULT_AISHA_KEY ? '' : s.aishaKey;
+  document.getElementById('cfgBackendUrl').value = s.backendUrl;
+  document.getElementById('cfgClaudeKey').value  = s.claudeKey;
+  document.getElementById('cfgAishaKey').placeholder = DEFAULT_AISHA_KEY.slice(0,20) + '… (default)';
+  document.getElementById('settingsOverlay').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.remove('open');
+}
+
+function saveSettings() {
+  const aishaKey   = document.getElementById('cfgAishaKey').value.trim();
+  const backendUrl = document.getElementById('cfgBackendUrl').value.trim().replace(/\/$/, '');
+  const claudeKey  = document.getElementById('cfgClaudeKey').value.trim();
+  if (aishaKey)   localStorage.setItem('aishaKey',   aishaKey);
+  else            localStorage.removeItem('aishaKey');
+  localStorage.setItem('backendUrl', backendUrl);
+  localStorage.setItem('claudeKey',  claudeKey);
+  closeSettings();
+  toast('Settings saved ✓', 'ok');
+  setStatus('Ready', '');
+}
+
+function overlayClick(e) {
+  if (e.target === e.currentTarget) closeSettings();
+}
+
+/* ════════════════════════════════════════════════
+   UI helpers
+═══════════════════════════════════════════════ */
+function setStatus(msg, type) {
+  const dot = document.getElementById('statusDot');
+  dot.className = 'dot' + (type ? ' ' + type : '');
+  document.getElementById('statusMsg').textContent = msg;
+}
+
+function updateCount(side) {
+  const v = document.getElementById(side + 'Text').value;
+  const words = v.trim() ? v.trim().split(/\s+/).length : 0;
+  document.getElementById(side + 'Count').textContent =
+    `${v.length} chars · ${words} words`;
+}
+
+function toast(msg, type = '') {
+  const box = document.getElementById('toastBox');
+  const el  = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(() => el.remove(), 3600);
+}
+
+function swapLangs() {
+  const sl = document.getElementById('srcLang');
+  const tl = document.getElementById('tgtLang');
+  const st = document.getElementById('srcText');
+  const tt = document.getElementById('tgtText');
+  [sl.value, tl.value] = [tl.value, sl.value];
+  [st.value, tt.value] = [tt.value, st.value];
+  updateCount('src');
+  updateCount('tgt');
+}
+
+function copyText(side) {
+  const val = document.getElementById(side + 'Text').value;
+  if (!val.trim()) { toast('Nothing to copy', 'err'); return; }
+  navigator.clipboard.writeText(val)
+    .then(() => toast('Copied to clipboard ✓', 'ok'))
+    .catch(() => {
+      document.getElementById(side + 'Text').select();
+      document.execCommand('copy');
+      toast('Copied ✓', 'ok');
+    });
+}
+
+function clearPanel(side) {
+  document.getElementById(side + 'Text').value = '';
+  updateCount(side);
+}
+
+function setBtnLoading(id, loading) {
+  const btn = document.getElementById(id);
+  if (loading) {
+    btn._orig = btn.innerHTML;
+    btn.innerHTML = '<div class="spin"></div> Working…';
+    btn.disabled = true;
+  } else {
+    btn.innerHTML = btn._orig || btn.innerHTML;
+    btn.disabled = false;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   STT — Aisha API
+═══════════════════════════════════════════════ */
+let mediaRec   = null;
+let recChunks  = [];
+let recording  = false;
+
+async function toggleRecord() {
+  recording ? stopRecord() : await startRecord();
+}
+
+async function startRecord() {
+  try {
+    setStatus('Requesting microphone…', 'busy');
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    // Pick best supported MIME type
+    const mimes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg', 'audio/mp4'];
+    const mime  = mimes.find(m => MediaRecorder.isTypeSupported(m)) || '';
+
+    mediaRec   = new MediaRecorder(stream, mime ? { mimeType: mime } : {});
+    recChunks  = [];
+
+    mediaRec.ondataavailable = e => { if (e.data.size > 0) recChunks.push(e.data); };
+    mediaRec.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(recChunks, { type: mediaRec.mimeType || 'audio/webm' });
+      await runSTT(blob, mediaRec.mimeType || 'audio/webm');
+    };
+
+    mediaRec.start();
+    recording = true;
+
+    const btn = document.getElementById('micBtn');
+    btn.classList.add('recording');
+    btn.textContent = '⏹';
+    setStatus('Recording… click to stop', 'busy');
+  } catch (err) {
+    setStatus('Mic error: ' + err.message, 'err');
+    toast('Cannot access microphone: ' + err.message, 'err');
+  }
+}
+
+function stopRecord() {
+  if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop();
+  recording = false;
+  const btn = document.getElementById('micBtn');
+  btn.classList.remove('recording');
+  btn.textContent = '🎤';
+  setStatus('Processing audio…', 'busy');
+}
+
+async function runSTT(blob, mimeType) {
+  const { aishaKey } = getSettings();
+  const lang = document.getElementById('srcLang').value;
+
+  const ext = mimeType.includes('ogg') ? 'ogg' : mimeType.includes('mp4') ? 'mp4' : 'webm';
+
+  try {
+    const fd = new FormData();
+    fd.append('audio', blob, `rec.${ext}`);
+    fd.append('language', lang);
+
+    const res = await fetch(AISHA_STT, {
+      method: 'POST',
+      headers: { 'x-api-key': aishaKey },
+      body: fd,
+    });
+
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Aisha STT ${res.status}: ${body.slice(0, 120)}`);
+    }
+
+    const data = await res.json();
+    const text = (data.text || data.transcript || '').trim();
+
+    if (text) {
+      document.getElementById('srcText').value = text;
+      updateCount('src');
+      setStatus('Speech recognised ✓', 'ok');
+      toast('Speech recognised!', 'ok');
+      await translate();
+    } else {
+      setStatus('No speech detected', '');
+      toast('No speech detected — try again', 'err');
+    }
+  } catch (err) {
+    console.error('[STT]', err);
+    setStatus('STT error: ' + err.message, 'err');
+    toast('STT failed: ' + err.message, 'err');
+  }
+}
+
+/* ════════════════════════════════════════════════
+   Translation
+═══════════════════════════════════════════════ */
+async function translate() {
+  const src = document.getElementById('srcText').value.trim();
+  if (!src) { toast('Enter text to translate first', 'err'); return; }
+
+  const srcLang = document.getElementById('srcLang').value;
+  const tgtLang = document.getElementById('tgtLang').value;
+  const { backendUrl, claudeKey } = getSettings();
+
+  setBtnLoading('translateBtn', true);
+  setStatus('Translating…', 'busy');
+
+  try {
+    let result;
+    if (backendUrl) {
+      result = await translateBackend(src, srcLang, tgtLang, backendUrl);
+    } else if (claudeKey) {
+      result = await translateClaude(src, srcLang, tgtLang, claudeKey);
+    } else {
+      throw new Error('No translation service configured — open ⚙️ Settings to add a backend URL or Claude API key.');
+    }
+
+    document.getElementById('tgtText').value = result;
+    updateCount('tgt');
+    setStatus('Translation complete ✓', 'ok');
+  } catch (err) {
+    console.error('[Translate]', err);
+    setStatus('Translation failed', 'err');
+    toast(err.message, 'err');
+  } finally {
+    setBtnLoading('translateBtn', false);
+  }
+}
+
+async function translateBackend(text, sourceLang, targetLang, url) {
+  const res = await fetch(`${url}/api/translate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, sourceLang, targetLang }),
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error || e.message || `Backend ${res.status}`);
+  }
+  const d = await res.json();
+  return d.translation || d.text || '';
+}
+
+async function translateClaude(text, sourceLang, targetLang, apiKey) {
+  const src = LANG_NAME[sourceLang] || sourceLang;
+  const tgt = LANG_NAME[targetLang] || targetLang;
+
+  const res = await fetch(CLAUDE_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type':  'application/json',
+      'x-api-key':     apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2048,
+      messages: [{
+        role: 'user',
+        content: `Translate from ${src} to ${tgt}. Return only the translation:\n\n${text}`,
+      }],
+    }),
+  });
+
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error?.message || `Claude API ${res.status}`);
+  }
+  const d = await res.json();
+  return d.content?.[0]?.text?.trim() || '';
+}
+
+/* ════════════════════════════════════════════════
+   TTS — Aisha (uz) / Web Speech (others)
+═══════════════════════════════════════════════ */
+let ttsAudio = null; // currently playing audio element
+
+async function speak(side) {
+  const text = document.getElementById(side + 'Text').value.trim();
+  if (!text) { toast('No text to speak', 'err'); return; }
+
+  const lang   = document.getElementById(side === 'src' ? 'srcLang' : 'tgtLang').value;
+  const btn    = document.getElementById(side + 'SpeakBtn');
+
+  // Toggle off if already playing this side
+  if (btn.classList.contains('playing')) {
+    if (ttsAudio) { ttsAudio.pause(); ttsAudio = null; }
+    window.speechSynthesis?.cancel();
+    btn.classList.remove('playing');
+    btn.textContent = '🔊 Speak';
+    setStatus('Ready', '');
+    return;
+  }
+
+  btn.classList.add('playing');
+  btn.textContent = '⏸ Stop';
+  setStatus('Generating speech…', 'busy');
+
+  const done = () => {
+    btn.classList.remove('playing');
+    btn.textContent = '🔊 Speak';
+    setStatus('Ready', '');
+  };
+
+  try {
+    if (lang === 'uz') {
+      await speakAisha(text, lang, done);
+    } else {
+      speakBrowser(text, lang, done);
+    }
+  } catch (err) {
+    console.error('[TTS]', err);
+    toast('TTS error: ' + err.message, 'err');
+    done();
+  }
+}
+
+async function speakAisha(text, lang, onDone) {
+  const { aishaKey } = getSettings();
+
+  const res = await fetch(AISHA_TTS, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key':    aishaKey,
+    },
+    body: JSON.stringify({ text, language: lang, voice: 'nigora' }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Aisha TTS ${res.status}: ${body.slice(0, 100)}`);
+  }
+
+  const blob = await res.blob();
+  const url  = URL.createObjectURL(blob);
+  const audio = document.getElementById('player');
+  audio.src = url;
+
+  ttsAudio = audio;
+
+  audio.onended  = () => { onDone(); URL.revokeObjectURL(url); ttsAudio = null; };
+  audio.onerror  = () => { onDone(); URL.revokeObjectURL(url); ttsAudio = null; };
+
+  await audio.play();
+  setStatus('Speaking…', 'ok');
+}
+
+function speakBrowser(text, lang, onDone) {
+  if (!window.speechSynthesis) { toast('Browser TTS not supported', 'err'); onDone(); return; }
+  window.speechSynthesis.cancel();
+
+  const utt  = new SpeechSynthesisUtterance(text);
+  utt.lang   = LANG_BCP47[lang] || lang;
+  utt.rate   = 0.95;
+  utt.onend  = onDone;
+  utt.onerror = onDone;
+  window.speechSynthesis.speak(utt);
+  setStatus('Speaking…', 'ok');
+}
+
+/* ════════════════════════════════════════════════
+   Keyboard shortcut & init
+═══════════════════════════════════════════════ */
+document.getElementById('srcText').addEventListener('keydown', e => {
+  if (e.ctrlKey && (e.key === 'Enter' || e.keyCode === 13)) {
+    e.preventDefault();
+    translate();
+  }
+});
+
+// Show setup hint if no config
+(function init() {
+  const { backendUrl, claudeKey } = getSettings();
+  if (!backendUrl && !claudeKey) {
+    setStatus('⚙️ Open Settings to configure translation (backend URL or Claude API key)', 'busy');
+  }
+  updateCount('src');
+  updateCount('tgt');
+})();
+</script>
+</body>
+</html>
