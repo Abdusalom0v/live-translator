@@ -502,8 +502,10 @@
    Config & constants
 ═══════════════════════════════════════════════ */
 const AISHA_BASE = 'https://back.aisha.group';
-const AISHA_STT  = AISHA_BASE + '/api/v1/stt/post/';
-const AISHA_TTS  = AISHA_BASE + '/api/v1/tts/post/';
+// Same-origin Vercel proxies (see /api/stt.js and /api/tts.js). Calling Aisha
+// directly from the browser is blocked by CORS, so we route through our server.
+const AISHA_STT  = '/api/stt';
+const AISHA_TTS  = '/api/tts';
 const CLAUDE_URL = 'https://api.anthropic.com/v1/messages';
 
 // Aisha only supports these for STT/TTS. Others fall back to the browser.

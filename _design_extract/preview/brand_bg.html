@@ -1,0 +1,305 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: #16162F;
+    color: var(--fg-1);
+    font-family: var(--font-sans);
+    overflow: hidden;
+  }
+  .stage {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    background:
+      radial-gradient(1200px 800px at 30% 20%, #1f1e44 0%, #181834 50%, #16162F 100%);
+  }
+
+  /* ==========================================================
+     Three calm orbs. Quiet drift. Mouse adds gentle parallax.
+     ========================================================== */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform;
+    pointer-events: none;
+  }
+  .orb-inner {
+    width: 100%; height: 100%; border-radius: 50%;
+    will-change: transform;
+  }
+
+  .o1 { width: 520px; height: 520px; top: -12%; left: -8%; }
+  .o1 .orb-inner { background: #7F77DD; opacity: 0.22; animation: drift1 28s ease-in-out infinite; }
+
+  .o2 { width: 460px; height: 460px; bottom: -14%; right: -6%; }
+  .o2 .orb-inner { background: #1D9E75; opacity: 0.14; animation: drift2 34s ease-in-out infinite; }
+
+  .o3 { width: 360px; height: 360px; top: 40%; right: 30%; }
+  .o3 .orb-inner { background: #5BA8E0; opacity: 0.12; animation: drift3 30s ease-in-out infinite; }
+
+  @keyframes drift1 {
+    0%   { transform: translate(0, 0)        scale(1);    }
+    50%  { transform: translate(80px, 60px)  scale(1.06); }
+    100% { transform: translate(0, 0)        scale(1);    }
+  }
+  @keyframes drift2 {
+    0%   { transform: translate(0, 0)        scale(1);    }
+    50%  { transform: translate(-90px, -50px) scale(1.08); }
+    100% { transform: translate(0, 0)        scale(1);    }
+  }
+  @keyframes drift3 {
+    0%   { transform: translate(0, 0)        scale(1);    }
+    50%  { transform: translate(60px, 80px)  scale(0.95); }
+    100% { transform: translate(0, 0)        scale(1);    }
+  }
+
+  /* Very faint spotlight following pointer */
+  .spotlight {
+    position: absolute;
+    width: 520px; height: 520px;
+    left: 0; top: 0;
+    margin-left: -260px; margin-top: -260px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side,
+      rgba(127,119,221,0.12) 0%,
+      rgba(127,119,221,0.05) 45%,
+      transparent 75%);
+    pointer-events: none;
+    will-change: transform;
+    opacity: 0;
+    transition: opacity 0.6s ease-out;
+  }
+  .stage.alive .spotlight { opacity: 1; }
+
+  /* Subtle vignette to keep edges quiet */
+  .vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(120% 90% at 50% 50%, transparent 60%, rgba(0,0,0,0.35) 100%);
+    pointer-events: none;
+  }
+
+  /* Faint grain */
+  .grain {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  /* Click — single thin ripple, that's all */
+  .ripple {
+    position: absolute;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    margin-left: -14px; margin-top: -14px;
+    border: 1px solid rgba(127,119,221,0.6);
+    pointer-events: none;
+    z-index: 6;
+    animation: ripple-anim 1.2s var(--ease-out) forwards;
+  }
+  @keyframes ripple-anim {
+    0%   { transform: scale(0.5); opacity: 0.8; }
+    100% { transform: scale(10);  opacity: 0;   }
+  }
+
+  /* ==========================================================
+     Content
+     ========================================================== */
+  .page {
+    position: relative;
+    z-index: 10;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 28px 36px;
+  }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    color: var(--fg-2);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 15px; font-weight: 600; letter-spacing: -0.01em;
+    color: var(--fg-1);
+  }
+  .brand-mark {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #7F77DD, #5048A8);
+    display: grid; place-items: center;
+    color: #fff;
+  }
+  .meta {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--fg-3);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .meta .dot {
+    display: inline-block;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--color-success);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .center {
+    display: grid; place-items: center;
+    text-align: center;
+  }
+  .hero {
+    font-size: 52px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.08;
+    margin: 0 0 16px;
+    color: var(--fg-1);
+  }
+  .sub {
+    font-size: 15px;
+    color: var(--fg-2);
+    max-width: 460px;
+    line-height: 1.55;
+    margin: 0 auto;
+  }
+
+  /* Legend along the bottom — quiet readout */
+  .legend {
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--fg-3);
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .legend .l { display: flex; gap: 24px; }
+  .legend .l span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .chip {
+    width: 8px; height: 8px; border-radius: 50%;
+    box-shadow: 0 0 6px currentColor;
+  }
+  .legend b { color: var(--fg-1); font-weight: 600; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head><body>
+
+<div class="stage" id="stage">
+  <div class="orb o1"><div class="orb-inner"></div></div>
+  <div class="orb o2"><div class="orb-inner"></div></div>
+  <div class="orb o3"><div class="orb-inner"></div></div>
+
+  <div class="spotlight" id="spotlight"></div>
+  <div class="vignette"></div>
+  <div class="grain"></div>
+
+  <div class="page">
+    <div class="topbar">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M5 10v2a7 7 0 0 0 14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="8" y1="22" x2="16" y2="22"/>
+          </svg>
+        </span>
+        LiveTranslate
+      </div>
+      <span class="meta"><span class="dot"></span>Animated background</span>
+    </div>
+
+    <div class="center">
+      <div>
+        <h1 class="hero">Calm aurora<br>behind the words.</h1>
+        <p class="sub">
+          Three soft orbs drift on slow keyframes. Pointer adds a gentle
+          parallax. Calm enough that the transcript stays the subject.
+        </p>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="l">
+        <span><span class="chip" style="color:#7F77DD; background:#7F77DD"></span><b>violet</b> · 22%</span>
+        <span><span class="chip" style="color:#1D9E75; background:#1D9E75"></span><b>teal</b> · 14%</span>
+        <span><span class="chip" style="color:#5BA8E0; background:#5BA8E0"></span><b>blue</b> · 12%</span>
+      </div>
+      <div class="l">
+        <span>blur 90px · drift 28–34s</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const spotlight = document.getElementById('spotlight');
+  const orbs = [
+    { el: document.querySelector('.o1'), strength: 18 },
+    { el: document.querySelector('.o2'), strength: -14 },
+    { el: document.querySelector('.o3'), strength: 12 },
+  ];
+
+  let mx = window.innerWidth / 2;
+  let my = window.innerHeight / 2;
+  let cx = mx, cy = my;
+  let target = { x: 0, y: 0 };
+  let lerped = { x: 0, y: 0 };
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const setRect = () => { stage._rect = stage.getBoundingClientRect(); };
+  setRect();
+  window.addEventListener('resize', setRect);
+
+  stage.addEventListener('pointerenter', () => stage.classList.add('alive'));
+  stage.addEventListener('pointerleave', () => stage.classList.remove('alive'));
+
+  stage.addEventListener('pointermove', (e) => {
+    const r = stage._rect;
+    mx = e.clientX - r.left;
+    my = e.clientY - r.top;
+    target.x = (mx / r.width  - 0.5);
+    target.y = (my / r.height - 0.5);
+  });
+
+  stage.addEventListener('click', (e) => {
+    const r = stage._rect;
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple';
+    ripple.style.left = x + 'px';
+    ripple.style.top  = y + 'px';
+    stage.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 1200);
+  });
+
+  const tick = () => {
+    lerped.x += (target.x - lerped.x) * 0.05;
+    lerped.y += (target.y - lerped.y) * 0.05;
+    orbs.forEach(({ el, strength }) => {
+      const tx = lerped.x * strength;
+      const ty = lerped.y * strength;
+      el.style.transform = `translate3d(${tx.toFixed(1)}px, ${ty.toFixed(1)}px, 0)`;
+    });
+    cx += (mx - cx) * 0.10;
+    cy += (my - cy) * 0.10;
+    spotlight.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
+    requestAnimationFrame(tick);
+  };
+  if (!reduce) requestAnimationFrame(tick);
+})();
+</script>
+</body></html>

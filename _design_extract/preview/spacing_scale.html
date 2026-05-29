@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html, body { margin: 0; padding: 0; background: var(--color-bg); color: var(--fg-1); font-family: var(--font-sans); }
+  .card { padding: 24px; display: flex; flex-direction: column; gap: 6px; }
+  .row { display: grid; grid-template-columns: 60px 60px 1fr 1fr; gap: 12px; align-items: center; padding: 4px 0; }
+  .name { font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+  .val { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); }
+  .bar { height: 12px; border-radius: 6px; background: var(--color-accent); }
+</style>
+</head><body>
+<div class="card">
+  <div class="row"><span class="name">sp-1</span><span class="val">4px</span><div class="bar" style="width:4px"></div><span class="val">tight gaps</span></div>
+  <div class="row"><span class="name">sp-2</span><span class="val">8px</span><div class="bar" style="width:8px"></div><span class="val">icon + label</span></div>
+  <div class="row"><span class="name">sp-3</span><span class="val">12px</span><div class="bar" style="width:12px"></div><span class="val">control padding</span></div>
+  <div class="row"><span class="name">sp-4</span><span class="val">16px</span><div class="bar" style="width:16px"></div><span class="val">card inner</span></div>
+  <div class="row"><span class="name">sp-5</span><span class="val">20px</span><div class="bar" style="width:20px"></div><span class="val">panel inner</span></div>
+  <div class="row"><span class="name">sp-6</span><span class="val">24px</span><div class="bar" style="width:24px"></div><span class="val">section margins</span></div>
+  <div class="row"><span class="name">sp-7</span><span class="val">32px</span><div class="bar" style="width:32px"></div><span class="val">large gap</span></div>
+  <div class="row"><span class="name">sp-8</span><span class="val">40px</span><div class="bar" style="width:40px"></div><span class="val">hero spacing</span></div>
+</div>
+</body></html>

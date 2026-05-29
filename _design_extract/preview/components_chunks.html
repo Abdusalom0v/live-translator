@@ -1,0 +1,46 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../ui_kits/app/app.css">
+<style>
+  html, body { margin: 0; padding: 0; background: var(--color-bg); color: var(--fg-1); font-family: var(--font-sans); }
+  .card { padding: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .lbl { font-family: var(--font-mono); font-size: 10px; color: var(--fg-3); margin-bottom: 8px; letter-spacing: 0.06em; text-transform: uppercase; display:block; }
+  .lt-chunk { animation: none; opacity: 1; transform: none; margin: 0; }
+</style>
+</head><body>
+<div class="card">
+  <div>
+    <span class="lbl">Settled chunk</span>
+    <div class="lt-chunk">
+      <span class="lt-chunk__time">14:22</span>
+      <div class="lt-chunk__text">The green pigment is called chlorophyll.</div>
+    </div>
+  </div>
+  <div>
+    <span class="lbl">Active · writing</span>
+    <div class="lt-chunk lt-chunk--active">
+      <span class="lt-chunk__time">14:23</span>
+      <div class="lt-chunk__text">It absorbs sunlight, mostly red</div>
+    </div>
+  </div>
+  <div>
+    <span class="lbl">Translating</span>
+    <div class="lt-chunk lt-chunk--translating">
+      <span class="lt-chunk__time">14:23</span>
+      <div class="lt-chunk__text">U quyosh nurini yutadi<span class="lt-dots"><span></span><span></span><span></span></span></div>
+    </div>
+  </div>
+  <div>
+    <span class="lbl">Hover (copy)</span>
+    <div class="lt-chunk" style="background: var(--color-accent-soft)">
+      <span class="lt-chunk__time">14:22</span>
+      <div class="lt-chunk__text">Yashil pigment xlorofil deb ataladi.</div>
+      <button class="lt-chunk__copy" style="opacity:1; transform:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</body></html>

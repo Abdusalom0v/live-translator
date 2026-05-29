@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--color-bg);
+    color: var(--fg-1);
+    font-family: var(--font-sans);
+    overflow: hidden;
+  }
+  .stage {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    background:
+      radial-gradient(1200px 800px at 30% 20%, #1f1e44 0%, #181834 50%, #16162F 100%);
+  }
+
+  /* Background orbs — calm, just enough to breathe */
+  .orb { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; will-change: transform; }
+  .o1 { width: 460px; height: 460px; top: -10%; left: -8%; background: #7F77DD; opacity: 0.20; animation: d1 30s ease-in-out infinite; }
+  .o2 { width: 380px; height: 380px; bottom: -12%; right: -6%; background: #1D9E75; opacity: 0.12; animation: d2 36s ease-in-out infinite; }
+  @keyframes d1 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(80px,60px) scale(1.06);} }
+  @keyframes d2 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-80px,-50px) scale(1.08);} }
+
+  /* =====================================================
+     LOGO CONSTRUCTION
+     ===================================================== */
+  .center {
+    position: relative; z-index: 2;
+    display: grid; place-items: center;
+    height: 100vh;
+  }
+  .lockup {
+    display: flex; align-items: center; gap: 22px;
+    padding: 8px 12px;
+    cursor: default;
+  }
+  .lockup:hover .mark .dot      { animation-duration: 0.7s; }
+  .lockup:hover .mark .arc-2    { opacity: 0.85; }
+  .lockup:hover .mark .arc-3    { opacity: 0.6; }
+  .lockup:hover .wordmark .indicator { box-shadow: 0 0 12px var(--color-success); }
+
+  /* ----- The mark ----- */
+  .mark {
+    width: 88px; height: 88px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #7F77DD 0%, #5048A8 100%);
+    box-shadow:
+      0 12px 36px rgba(127,119,221,0.40),
+      inset 0 1px 0 rgba(255,255,255,0.12);
+    position: relative;
+    display: grid; place-items: center;
+    overflow: hidden;
+  }
+  /* Inner highlight wash */
+  .mark::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 30% 25%, rgba(255,255,255,0.20), transparent 55%),
+      radial-gradient(circle at 80% 90%, rgba(0,0,0,0.18),  transparent 50%);
+    pointer-events: none;
+  }
+  /* SVG glyph fills the mark */
+  .mark svg { width: 100%; height: 100%; position: relative; z-index: 1; }
+
+  .arc        { fill: none; stroke: #fff; stroke-linecap: round; }
+  .arc-1      { stroke-width: 3;   opacity: 1;    }
+  .arc-2      { stroke-width: 2;   opacity: 0.55; transition: opacity 0.4s ease-out; }
+  .arc-3      { stroke-width: 1.5; opacity: 0.30; transition: opacity 0.4s ease-out; }
+
+  .dot {
+    fill: #fff;
+    transform-origin: center;
+    animation: dot-pulse 1.4s ease-in-out infinite both;
+  }
+  .dot-1 { animation-delay: 0s;    }
+  .dot-2 { animation-delay: 0.2s;  }
+  .dot-3 { animation-delay: 0.4s;  }
+  @keyframes dot-pulse {
+    0%, 80%, 100% { transform: scale(0.55); opacity: 0.45; }
+    40%           { transform: scale(1.20); opacity: 1;    }
+  }
+
+  /* Outer "live" ring pulse */
+  .live-ring {
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    border: 1.5px solid rgba(127,119,221,0.55);
+    animation: live-ring 2.4s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes live-ring {
+    0%   { transform: scale(1);    opacity: 0.7; }
+    100% { transform: scale(1.35); opacity: 0;   }
+  }
+
+  /* ----- Wordmark ----- */
+  .wordmark { position: relative; }
+  .wordmark .row {
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .wordmark .word {
+    font-size: 44px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1;
+    color: var(--fg-1);
+  }
+  .wordmark .word span {
+    display: inline-block;
+    opacity: 0; transform: translateY(8px);
+    animation: letter-in 0.6s var(--ease-out) forwards;
+  }
+  .wordmark .live  span:nth-child(1) { animation-delay: 0.05s; }
+  .wordmark .live  span:nth-child(2) { animation-delay: 0.10s; }
+  .wordmark .live  span:nth-child(3) { animation-delay: 0.15s; }
+  .wordmark .live  span:nth-child(4) { animation-delay: 0.20s; }
+  .wordmark .trans span:nth-child(1) { animation-delay: 0.30s; }
+  .wordmark .trans span:nth-child(2) { animation-delay: 0.35s; }
+  .wordmark .trans span:nth-child(3) { animation-delay: 0.40s; }
+  .wordmark .trans span:nth-child(4) { animation-delay: 0.45s; }
+  .wordmark .trans span:nth-child(5) { animation-delay: 0.50s; }
+  .wordmark .trans span:nth-child(6) { animation-delay: 0.55s; }
+  .wordmark .trans span:nth-child(7) { animation-delay: 0.60s; }
+  .wordmark .trans span:nth-child(8) { animation-delay: 0.65s; }
+  .wordmark .trans span:nth-child(9) { animation-delay: 0.70s; }
+  @keyframes letter-in { to { opacity: 1; transform: translateY(0); } }
+
+  .wordmark .trans {
+    background: linear-gradient(120deg, #C8C0FF 0%, #FFFFFF 50%, #C8C0FF 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 5s linear infinite;
+  }
+  @keyframes shine { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+  .wordmark .indicator {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--color-success);
+    margin-left: 4px;
+    transform: translateY(-12px);
+    box-shadow: 0 0 6px var(--color-success);
+    animation: live-blink 1.6s ease-in-out infinite;
+    transition: box-shadow 0.3s ease-out;
+  }
+  @keyframes live-blink {
+    0%, 100% { opacity: 1;   }
+    50%      { opacity: 0.5; }
+  }
+
+  .wordmark .tag {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 12px;
+    color: var(--fg-3);
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: letter-in 0.6s var(--ease-out) 0.85s forwards;
+  }
+  .wordmark .tag .swap {
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .wordmark .tag .lang {
+    color: var(--fg-1);
+    background: rgba(127,119,221,0.16);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .wordmark .tag .lang.swap-active {
+    animation: lang-swap 4s ease-in-out infinite;
+  }
+  @keyframes lang-swap {
+    0%, 25%   { content: 'EN'; }
+    33%, 58%  { content: 'UZ'; }
+    66%, 91%  { content: 'RU'; }
+    100%      { content: 'EN'; }
+  }
+  /* Hack: rotate the visible text by JS instead — keep CSS simple */
+  .wordmark .arrow {
+    color: var(--color-accent);
+    animation: arrow-nudge 1.6s ease-in-out infinite;
+  }
+  @keyframes arrow-nudge {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(4px); }
+  }
+
+  /* =====================================================
+     Spec strip along the bottom
+     ===================================================== */
+  .spec {
+    position: absolute; bottom: 28px; left: 0; right: 0;
+    display: flex; justify-content: center; gap: 28px;
+    color: var(--fg-3);
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.10em; text-transform: uppercase;
+  }
+  .spec b { color: var(--fg-1); font-weight: 600; }
+  .spec .dot-sep { color: var(--fg-4); }
+
+  /* =====================================================
+     Concept legend in corner — explains the glyph
+     ===================================================== */
+  .concept {
+    position: absolute; top: 26px; left: 26px;
+    background: rgba(20, 20, 46, 0.55);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    backdrop-filter: blur(12px);
+    max-width: 280px;
+    color: var(--fg-2);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .concept h4 {
+    margin: 0 0 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .concept p { margin: 0; }
+  .concept .key { color: var(--color-accent); font-weight: 600; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .wordmark .word span { opacity: 1; transform: none; }
+    .wordmark .tag { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+
+  <div class="concept">
+    <h4>The glyph</h4>
+    <p>Two listening arcs on either side, a <span class="key">three-dot pulse</span> flowing left → right between them — the act of catching speech and re-emitting it in another tongue, in real time.</p>
+  </div>
+
+  <div class="center">
+    <div class="lockup">
+      <!-- The mark -->
+      <div class="mark" aria-label="LiveTranslate mark">
+        <span class="live-ring" aria-hidden="true"></span>
+        <svg viewBox="0 0 80 80" aria-hidden="true">
+          <!-- Left listening arcs (source) -->
+          <path class="arc arc-1" d="M27 32 a10 10 0 0 0 0 16" />
+          <path class="arc arc-2" d="M22 28 a14 14 0 0 0 0 24" />
+          <path class="arc arc-3" d="M17 24 a18 18 0 0 0 0 32" />
+          <!-- Right speaking arcs (target) -->
+          <path class="arc arc-1" d="M53 32 a10 10 0 0 1 0 16" />
+          <path class="arc arc-2" d="M58 28 a14 14 0 0 1 0 24" />
+          <path class="arc arc-3" d="M63 24 a18 18 0 0 1 0 32" />
+          <!-- Three pulse dots — the flow of translation -->
+          <circle class="dot dot-1" cx="33" cy="40" r="3" />
+          <circle class="dot dot-2" cx="40" cy="40" r="3" />
+          <circle class="dot dot-3" cx="47" cy="40" r="3" />
+        </svg>
+      </div>
+
+      <!-- Wordmark -->
+      <div class="wordmark">
+        <div class="row">
+          <span class="word live"><span>L</span><span>i</span><span>v</span><span>e</span></span>
+          <span class="word trans"><span>T</span><span>r</span><span>a</span><span>n</span><span>s</span><span>l</span><span>a</span><span>t</span><span>e</span></span>
+          <span class="indicator" aria-label="Live"></span>
+        </div>
+        <div class="tag">
+          <span class="lang" id="lang-from">EN</span>
+          <span class="arrow">→</span>
+          <span class="lang" id="lang-to">UZ</span>
+          <span class="dot-sep">·</span>
+          <span>real-time tarjima · classroom</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <span><b>mark</b> 88 / 22 r</span>
+    <span class="dot-sep">·</span>
+    <span><b>pulse</b> 1.4s · 3 dots</span>
+    <span class="dot-sep">·</span>
+    <span><b>ring</b> 2.4s ripple</span>
+    <span class="dot-sep">·</span>
+    <span><b>wordmark</b> stagger 50ms</span>
+  </div>
+</div>
+
+<script>
+// Cycle the language pair in the tag — EN→UZ, UZ→RU, RU→EN
+(() => {
+  const pairs = [
+    ['EN', 'UZ'],
+    ['UZ', 'RU'],
+    ['RU', 'EN'],
+    ['EN', 'RU'],
+  ];
+  const from = document.getElementById('lang-from');
+  const to   = document.getElementById('lang-to');
+  let i = 0;
+  setInterval(() => {
+    i = (i + 1) % pairs.length;
+    from.style.transition = 'opacity .2s, transform .2s';
+    to.style.transition   = 'opacity .2s, transform .2s';
+    from.style.opacity = '0'; from.style.transform = 'translateY(-4px)';
+    to.style.opacity   = '0'; to.style.transform   = 'translateY(-4px)';
+    setTimeout(() => {
+      from.textContent = pairs[i][0];
+      to.textContent   = pairs[i][1];
+      from.style.opacity = '1'; from.style.transform = 'translateY(0)';
+      to.style.opacity   = '1'; to.style.transform   = 'translateY(0)';
+    }, 220);
+  }, 2400);
+})();
+</script>
+</body>
+</html>

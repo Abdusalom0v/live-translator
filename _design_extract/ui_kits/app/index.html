@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LiveTranslate — UI Kit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../fonts/fonts.css">
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="app.css">
+<style>
+  /* Mode-switcher (demo-only chrome — not part of the kit) */
+  .lt-demo-switch {
+    position: fixed; top: 14px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex; gap: 4px;
+    padding: 4px;
+    background: rgba(42, 42, 74, 0.72);
+    border: 1px solid var(--color-border);
+    border-radius: var(--r-pill);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-md);
+  }
+  .lt-demo-switch button {
+    background: transparent; border: none;
+    padding: 6px 14px;
+    color: var(--fg-2);
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .lt-demo-switch button[aria-pressed="true"] {
+    background: var(--color-accent);
+    color: var(--fg-on-accent);
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="Icons.jsx"></script>
+<script type="text/babel" src="AnimatedBackground.jsx"></script>
+<script type="text/babel" src="MicButton.jsx"></script>
+<script type="text/babel" src="Transcript.jsx"></script>
+<script type="text/babel" src="Onboarding.jsx"></script>
+<script type="text/babel" src="AppLayout.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+function Demo() {
+  // Modes: 'app' (full layout), 'onboarding'
+  const [mode, setMode] = useState('app');
+  const [langs, setLangs] = useState({ source: 'en', target: 'uz' });
+
+  const handleComplete = (l) => { setLangs(l); setMode('app'); };
+
+  return (
+    <>
+      <AnimatedBackground />
+      <div className="lt-demo-switch" role="tablist" aria-label="Demo view">
+        <button onClick={() => setMode('app')}        aria-pressed={mode === 'app'}>App</button>
+        <button onClick={() => setMode('onboarding')} aria-pressed={mode === 'onboarding'}>Onboarding</button>
+      </div>
+      {mode === 'app'        && <AppLayout initialLanguages={langs} />}
+      {mode === 'onboarding' && <Onboarding onComplete={handleComplete} />}
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<Demo />);
+</script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+/* =============================================================
+   LiveTranslate — Design Tokens
+   Real-time translation app for classroom use
+   Dark theme is the default (designed for projection in classrooms)
+   ============================================================= */
+
+:root {
+  /* ---------- Color: Brand / Surface (Night — default) ---------- */
+  --color-bg:            #1E1E3F;   /* primary background — deep indigo */
+  --color-bg-elevated:   #252548;   /* slight lift over bg */
+  --color-card:          #2A2A4A;   /* cards, panels */
+  --color-card-hover:    #32325A;
+  --color-surface-2:     #3A3A66;   /* nested surface */
+  --color-border:        rgba(127, 119, 221, 0.18);
+  --color-border-strong: rgba(127, 119, 221, 0.32);
+  --color-divider:       rgba(245, 245, 247, 0.08);
+
+  /* ---------- Color: Brand / Surface (Day) ---------- */
+  /* Apply `data-theme="day"` on <html> or scope, then opt these in. */
+  --color-bg-light:            #F7F6FB;
+  --color-bg-elevated-light:   #FFFFFF;
+  --color-card-light:          #FFFFFF;
+  --color-card-hover-light:    #F0EDF8;
+  --color-surface-2-light:     #E6E2F2;
+  --color-border-light:        rgba(80, 72, 168, 0.16);
+  --color-border-strong-light: rgba(80, 72, 168, 0.30);
+  --color-divider-light:       rgba(21, 18, 58, 0.08);
+
+  /* Day-mode foreground */
+  --fg-1-light: #15123A;
+  --fg-2-light: rgba(21, 18, 58, 0.72);
+  --fg-3-light: rgba(21, 18, 58, 0.55);
+  --fg-4-light: rgba(21, 18, 58, 0.35);
+
+  /* ---------- Color: Accent (interactive) ---------- */
+  --color-accent:        #7F77DD;   /* primary action / focus */
+  --color-accent-hover:  #948CE5;
+  --color-accent-press:  #6A62C9;
+  --color-accent-soft:   rgba(127, 119, 221, 0.16);
+  --color-accent-glow:   rgba(127, 119, 221, 0.45);
+
+  /* ---------- Color: Semantic ---------- */
+  --color-success:       #1D9E75;   /* translation ready, recording done */
+  --color-success-soft:  rgba(29, 158, 117, 0.18);
+  --color-warning:       #E0A23C;
+  --color-warning-soft:  rgba(224, 162, 60, 0.18);
+  --color-error:         #E24B4A;   /* permission denied, network error */
+  --color-error-soft:    rgba(226, 75, 74, 0.18);
+  --color-info:          #5BA8E0;
+  --color-info-soft:     rgba(91, 168, 224, 0.18);
+
+  /* ---------- Color: Text ---------- */
+  --fg-1: #F5F5F7;                  /* primary text on dark */
+  --fg-2: rgba(245, 245, 247, 0.72);/* secondary */
+  --fg-3: rgba(245, 245, 247, 0.50);/* tertiary, timestamps */
+  --fg-4: rgba(245, 245, 247, 0.32);/* placeholder */
+  --fg-on-accent: #FFFFFF;
+  --fg-on-success: #FFFFFF;
+  --fg-on-error:   #FFFFFF;
+
+  /* ---------- Background animation orbs ---------- */
+  --orb-purple: #7F77DD;
+  --orb-teal:   #1D9E75;
+  --orb-blue:   #5BA8E0;
+  --orb-violet: #5048A8;
+
+  /* ---------- Typography ---------- */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto,
+               'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono',
+               Menlo, Consolas, monospace;
+
+  /* font size scale (1.125 modular) */
+  --fs-2xs: 11px;
+  --fs-xs:  12px;
+  --fs-sm:  14px;
+  --fs-md:  16px;   /* body */
+  --fs-lg:  18px;
+  --fs-xl:  20px;
+  --fs-2xl: 24px;
+  --fs-3xl: 30px;
+  --fs-4xl: 38px;
+  --fs-5xl: 48px;
+  --fs-6xl: 64px;
+
+  /* line heights */
+  --lh-tight:  1.15;
+  --lh-snug:   1.30;
+  --lh-normal: 1.50;
+  --lh-relaxed:1.60;   /* transcript / reading */
+  --lh-loose:  1.75;
+
+  /* font weights */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* letter-spacing */
+  --ls-tight:  -0.02em;
+  --ls-normal:  0;
+  --ls-wide:    0.04em;
+  --ls-mega:    0.12em; /* tiny caps labels */
+
+  /* ---------- Spacing scale (4px base) ---------- */
+  --sp-0:  0;
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-7:  32px;
+  --sp-8:  40px;
+  --sp-9:  56px;
+  --sp-10: 72px;
+  --sp-11: 96px;
+
+  /* ---------- Radii ---------- */
+  --r-xs:   4px;
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-xl:   24px;
+  --r-pill: 999px;
+  --r-circle: 50%;
+
+  /* ---------- Shadows / glows ---------- */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.30);
+  --shadow-md: 0 6px 16px rgba(0,0,0,0.35);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.45);
+  --shadow-card: 0 8px 24px rgba(8, 8, 30, 0.45),
+                 inset 0 1px 0 rgba(255,255,255,0.04);
+  --glow-accent: 0 0 24px rgba(127,119,221,0.45);
+  --glow-success: 0 0 24px rgba(29,158,117,0.40);
+  --glow-error: 0 0 18px rgba(226,75,74,0.45);
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.30, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast:   150ms;
+  --dur-base:   240ms;
+  --dur-slow:   400ms;
+  --dur-chunk:  300ms;  /* transcript chunk slide-in */
+
+  /* ---------- Layout ---------- */
+  --header-h: 64px;
+  --langbar-h: 56px;
+  --statusbar-h: 40px;
+  --controlbar-h: auto;
+  --content-max: 1440px;
+}
+
+/* =============================================================
+   SEMANTIC TYPE STYLES
+   Use these classes / variables; never hard-code font sizes.
+   ============================================================= */
+
+html, body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  line-height: var(--lh-normal);
+  color: var(--fg-1);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.lt-display {
+  font-size: var(--fs-6xl);
+  line-height: var(--lh-tight);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-tight);
+}
+.lt-h1 {
+  font-size: var(--fs-4xl);
+  line-height: var(--lh-tight);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-tight);
+}
+.lt-h2 {
+  font-size: var(--fs-3xl);
+  line-height: var(--lh-snug);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-tight);
+}
+.lt-h3 {
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-snug);
+  font-weight: var(--fw-semibold);
+}
+.lt-h4 {
+  font-size: var(--fs-xl);
+  line-height: var(--lh-snug);
+  font-weight: var(--fw-semibold);
+}
+.lt-body {
+  font-size: var(--fs-md);
+  line-height: var(--lh-relaxed);
+  font-weight: var(--fw-regular);
+}
+.lt-body-sm {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+}
+.lt-transcript {
+  /* primary in-class reading style */
+  font-size: var(--fs-md);
+  line-height: 1.6;     /* 1.6 per spec */
+  font-weight: var(--fw-regular);
+  letter-spacing: 0;
+}
+.lt-transcript-lg {
+  /* projector mode */
+  font-size: var(--fs-xl);
+  line-height: 1.6;
+  font-weight: var(--fw-medium);
+}
+.lt-label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-mega);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.lt-timestamp {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-wide);
+  color: var(--fg-3);
+}
+.lt-caption {
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  line-height: var(--lh-normal);
+}
+.lt-button {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0;
+}
+.lt-mono {
+  font-family: var(--font-mono);
+}
+
+/* =============================================================
+   GLOBAL KEYFRAMES (used across the design system)
+   ============================================================= */
+
+@keyframes lt-chunk-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lt-pulse {
+  0%, 100% { transform: scale(1);   opacity: 1;   }
+  50%      { transform: scale(1.08); opacity: 0.85;}
+}
+
+@keyframes lt-ripple {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  100% { transform: scale(2.4); opacity: 0;    }
+}
+
+@keyframes lt-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes lt-shake {
+  0%, 100%             { transform: translateX(0); }
+  15%, 45%, 75%        { transform: translateX(-6px); }
+  30%, 60%, 90%        { transform: translateX(6px); }
+}
+
+@keyframes lt-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes lt-dot {
+  0%, 80%, 100% { transform: scale(0.5); opacity: 0.4; }
+  40%           { transform: scale(1);   opacity: 1;   }
+}
+
+@keyframes lt-orb-drift-1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(60px, -40px) scale(1.08); }
+  66%  { transform: translate(-30px, 50px) scale(0.95); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes lt-orb-drift-2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-70px, 60px) scale(1.12); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes lt-orb-drift-3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  40%  { transform: translate(40px, 70px) scale(0.9); }
+  80%  { transform: translate(-50px, -30px) scale(1.1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes lt-wave-bar {
+  0%, 100% { transform: scaleY(0.25); }
+  50%      { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
